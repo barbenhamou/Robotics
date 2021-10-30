@@ -4,6 +4,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.spikes2212.command.drivetrains.TankDrivetrain;
 import com.spikes2212.command.drivetrains.commands.DriveTank;
+import com.spikes2212.command.drivetrains.commands.DriveTankWithPID;
 import com.spikes2212.control.PIDSettings;
 import com.spikes2212.dashboard.RootNamespace;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -38,15 +39,22 @@ public class Robot extends TimedRobot {
     final Supplier<Double> waitTime = root.addConstantDouble("waitTime", 0);
 
 
-    TankDrivetrain driveTrain = new TankDrivetrain(new SpeedControllerGroup((SpeedController) new WPI_TalonSRX(RobotMap.CAN.leftTalon), new VictorSP(RobotMap.PWM.leftVictor)),
-            new SpeedControllerGroup((SpeedController) new WPI_TalonSRX(RobotMap.CAN.rightTalon), new VictorSP(RobotMap.PWM.rightVictor)));
+    TankDrivetrain driveTrain = new TankDrivetrain(new SpeedControllerGroup(new WPI_TalonSRX(RobotMap.CAN.leftTalon), new VictorSP(RobotMap.PWM.leftVictor)),
+            new SpeedControllerGroup(new WPI_TalonSRX(RobotMap.CAN.rightTalon), new VictorSP(RobotMap.PWM.rightVictor)));
 
-    OI oi = new OI();
-    DriveTank driveTank = new DriveTank(driveTrain, oi::getLeftY, oi::getRightY);
-    driveTrain.setDefaultCommand(driveTank);
+//    OI oi = new OI();
+//    DriveTank driveTank = new DriveTank(driveTrain, oi::getLeftY, oi::getRightY);
+//    driveTrain.setDefaultCommand(driveTank);
+    Encoder leftEncoder = new Encoder(0,1);
+    Encoder rightEncoder = new Encoder(2,3);
     PIDSettings pidSettings = new PIDSettings(kP, kI, kD, tolerance, waitTime);
+    DriveTankWithPID drive = new DriveTankWithPID(driveTrain, pidSettings, pidSettings, 5, 5,
+            leftEncoder::getDistance, rightEncoder::getDistance);
+    Drivetrain drivetrain = new Drivetrain(new SpeedControllerGroup(new WPI_TalonSRX(RobotMap.CAN.leftTalon), new VictorSP(RobotMap.PWM.leftVictor)),
+            new SpeedControllerGroup(new WPI_TalonSRX(RobotMap.CAN.rightTalon), new VictorSP(RobotMap.PWM.rightVictor)), leftEncoder, rightEncoder,
+            10/4096.0, 10/4096.0);
+  root.putData("drivetrain",drivetrain);
   }
-
   /**
    * This function is called every robot packet, no matter the mode. Use this for items like
    * diagnostics that you want ran during disabled, autonomous, teleoperated and test.

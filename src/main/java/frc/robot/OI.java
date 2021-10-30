@@ -30,8 +30,8 @@ public class OI {
 //        MoveGenericSubsystem shoot = new MoveGenericSubsystem(shooting, 0.6);
 //        button = new JoystickButton(left, 5);
 //        button.whileHeld(shoot);
-        TankDrivetrain driveTrain = new TankDrivetrain(new SpeedControllerGroup((SpeedController) new WPI_TalonSRX(RobotMap.CAN.leftTalon), new VictorSP(RobotMap.PWM.leftVictor)),
-                new SpeedControllerGroup((SpeedController) new WPI_TalonSRX(RobotMap.CAN.rightTalon), new VictorSP(RobotMap.PWM.rightVictor)));
+        TankDrivetrain driveTrain = new TankDrivetrain(new SpeedControllerGroup(new WPI_TalonSRX(RobotMap.CAN.leftTalon), new VictorSP(RobotMap.PWM.leftVictor)),
+                new SpeedControllerGroup( new WPI_TalonSRX(RobotMap.CAN.rightTalon), new VictorSP(RobotMap.PWM.rightVictor)));
         PIDSettings pidSettings = new PIDSettings(Robot.root.getNumber("kP"), Robot.root.getNumber("kI"), Robot.root.getNumber("kD"), Robot.root.getNumber("tolerance"), Robot.root.getNumber("waitTIme"));
 
         Encoder leftEncoder = new Encoder(0, 1);
